@@ -44,6 +44,6 @@ jobs:
             docker run -d \
               --name portfolio-app \
               --restart unless-stopped \
-              -p 3000:3000 \
+              -p 3050:3000 \
               $IMAGE_URI
           "
