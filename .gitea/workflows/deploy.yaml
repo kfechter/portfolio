@@ -1,0 +1,49 @@
+name: Build, Push to Gitea Registry, and Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  REGISTRY: gitea.your-domain.com # Your Gitea domain or internal IP
+  IMAGE_NAME: ${{ gitea.repository }} # e.g. "username/portfolio"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Gitea Container Registry
+        run: |
+          echo "${{ gitea.token }}" | docker login $REGISTRY -u ${{ gitea.actor }} --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_URI="$REGISTRY/$IMAGE_NAME:latest"
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+      - name: Deploy to Remote Docker Host via SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.REMOTE_HOST }}
+          USER: ${{ secrets.REMOTE_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          IMAGE_URI="$REGISTRY/$IMAGE_NAME:latest"
+          
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $USER@$HOST "
+            docker pull $IMAGE_URI && \
+            docker stop portfolio-app || true && \
+            docker rm portfolio-app || true && \
+            docker run -d \
+              --name portfolio-app \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              $IMAGE_URI
+          "
