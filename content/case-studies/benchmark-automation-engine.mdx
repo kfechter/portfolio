@@ -1,0 +1,14 @@
+## State Persistence & Telemetry Collection
+
+To survive continuous reboot cycles during mobile battery discharge tests, the local client-side daemon maintains a durable state machine in non-volatile storage.
+
+<ArchitectureCallout type="reliability" title="Handling Unclean Shutdowns">
+  Writing heartbeat telemetry directly to disk before executing power-state transitions 
+  prevented log truncation during abrupt battery cutoff events.
+</ArchitectureCallout>
+
+## Zero-Touch Provisioning Architecture
+To replace the fragile RPC/PSExec push mechanism, the target architecture inverts the control model to an autonomous client pull pipeline:
+<ProvisioningLifecycle />
+### Phase 1: Unattended Answer Files & Ingestion
+By embedding a custom `unattend.xml`
