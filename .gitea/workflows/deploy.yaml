@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  REGISTRY: gitea.your-domain.com # Your Gitea domain or internal IP
+  REGISTRY: source.kennethfechter.com # Your Gitea domain or internal IP
   IMAGE_NAME: ${{ gitea.repository }} # e.g. "username/portfolio"
 
 jobs:
