@@ -17,8 +17,8 @@ jobs:
 
       - name: Log in to Gitea Container Registry
         run: |
-          echo "${{ gitea.token }}" | docker login $REGISTRY -u ${{ gitea.actor }} --password-stdin
-
+          echo "${{ secrets.PUBLISH_TOKEN }}" | docker login $REGISTRY -u kfechter --password-stdin
+      
       - name: Build and Push Docker Image
         run: |
           IMAGE_URI="$REGISTRY/$IMAGE_NAME:latest"
