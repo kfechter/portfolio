@@ -1,20 +1,5 @@
 import Link from "next/link";
 
-const PILLARS = [
-  {
-    title: "Bare-Metal & OS Automation",
-    description: "Specializing in zero-touch provisioning, custom answer files (unattend.xml), WinPE/Sysprep, and native background daemons."
-  },
-  {
-    title: "Infrastructure & Homelab DevOps",
-    description: "Operating a self-hosted containerized lab running Docker, Nginx reverse proxies, private mirrors, and automated Gitea CI/CD runners."
-  },
-  {
-    title: "Systems Integration & State Persistence",
-    description: "Bridging hardware telemetry to enterprise REST APIs (Snipe-IT), persistent crash-resilient storage, and fleet orchestration."
-  }
-];
-
 export function AboutSection() {
   return (
     <section className="space-y-10 border-t border-neutral-800 pt-16">
@@ -44,36 +29,15 @@ export function AboutSection() {
         </p>
       </div>
 
-      {/* Core Competency Pillars Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PILLARS.map((pillar) => (
-          <div
-            key={pillar.title}
-            className="p-6 rounded-lg border border-neutral-800 bg-neutral-900/30 space-y-3"
-          >
-            <h3 className="text-base font-semibold text-neutral-100 flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-              {pillar.title}
-            </h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              {pillar.description}
-            </p>
-          </div>
-        ))}
-      </div>
-
       {/* Homelab Specifications Card */}
       <div className="p-6 rounded-lg border border-neutral-800/80 bg-neutral-950 space-y-4">
         <div className="flex items-center justify-between">
           <span className="font-mono text-xs text-neutral-400 uppercase tracking-wider">
             Homelab
           </span>
-          <span className="font-mono text-xs text-emerald-400">
-            ● Active Homelab Node
-          </span>
         </div>
         <p className="text-xs text-neutral-400 leading-relaxed">
-          This site is BLURB ABOUT LAB HERE
+          This site is running on docker hosted on a server in my house. Deployed from a public github repo via a gitea mirror and gitea actions.
         </p>
         <Link
             href="/case-studies/homelab-platform-architecture"

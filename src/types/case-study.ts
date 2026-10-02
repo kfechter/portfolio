@@ -10,6 +10,6 @@ export interface CaseStudyMeta {
   headline: string;
   systemDomain: string; // e.g. "Bare-Metal Automation & Distributed Daemons"
   stack: string[];      // e.g. ["PowerShell", "WinPE/Sysprep", "Snipe-IT REST API", "Go/Rust"]
-  metrics: MetricImpact[];
+  metrics?: MetricImpact[]; // <-- Add the ? to make it optional
   summary: string;
 }

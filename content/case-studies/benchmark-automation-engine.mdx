@@ -1,14 +1,80 @@
-## State Persistence & Telemetry Collection
+## Performance Benchmark Automation
 
-To survive continuous reboot cycles during mobile battery discharge tests, the local client-side daemon maintains a durable state machine in non-volatile storage.
+In my current role at Signal65, I worked on a system to automate the automation of performance benchmarking.
 
-<ArchitectureCallout type="reliability" title="Handling Unclean Shutdowns">
-  Writing heartbeat telemetry directly to disk before executing power-state transitions 
-  prevented log truncation during abrupt battery cutoff events.
+Some basic scripting existed (and was working) using PSExec and Python to remote control computers. This solution however,
+was somewhat brittle and required a bunch of manual configuration to get the systems up and running. 
+
+The Automation system that exists today was built in several phases.
+
+  * **Phase 1:** Web application driving a PSExec Broker over RabbitMQ to control DUTs
+  * **Phase 2:** Replacing RabbitMQ and PSExec with NATS JetStream messaging and on device daemons
+  * **Phase 3:** Unattend Deployment with Interactive Asset creation
+  * **Phase 4:** One Touch Registration and Asset Creation
+
+
+<ArchitectureCallout type="problem" title="PSExec Complexity and Fragility">
+  While PSExec worked, it was a very kludgy solution and was prone to very small changes in a benchmark
+  application or result file causing the whole process to fold in on itself and die. It also required
+  very specific configurations on each machine (user and password, firewall, winrm configs)
 </ArchitectureCallout>
+
+<ArchitectureCallout type="decision" title="PSExec vs PowerShell Remoting">
+  The preferred solution for remote windows automation is PowerShell Remoting, but we found that benchmark 
+  applications that ran outside of the user graphical setting either didn't work at all or produced unusable
+  performance options.
+</ArchitectureCallout>
+
+
+Despite the pain of PSExec, the first version of Quasar used it to remote control the DUTs, because for the most part
+it worked. the web application that serves as the control pane for the benchmark automation was written in ASP.NET Core
+utilizing Razor Pages for the rendered UI. 
+
+The PSExec and result parser interface was written in python and compiled with PyInstaller. Eventually it was split into two because the
+benchmark applications took long enough that the message bus connection would lose heartbeat and crash the python application. 
+
+Quasar communicated with the Python service over RabbitMQ, the benchmark definitions and commands were passed to the runner via json,
+and the runner would use PSExec and scripts on the DUT to run the benchmarks and parse the results. 
+
+At this point, the setup of the machine was still very much hands on and fully interactive. Several PowerShell scripts had to be run, and 
+the OOBE of the machine had to be performed manually, and user/password configured on the system and in Quasar for PSExec to work. 
+
+
+That led to Phase 2, Replacing PSExec with a local daemon.
+
+
+<ArchitectureCallout type="solution" title="NATS Messaging and on device daemon.">
+  Replacing RabbitMQ with NATS allowed better scalability and performance, and JetStream message queues
+  allowed more flexibility with Dev/Production Environments. The on-device Daemon removed the need for 
+  a seperate windows machine for PSExec, and allowed for the eventual introduction of macOS, Linux, and Android
+  automation.
+</ArchitectureCallout>
+
+With the new daemon, we were able to remove some of the configuration work required by a system. Setting specific passwords were no longer required,
+and the daemon could communicate more rich information and logging back to quasar. Eventually, the daemon could get windows update status, pull driver information
+and trigger benchmark installations and updates directly from the quasar interface. Quasar became a source of truth for the state of a DUT, and that data could be
+presented alongside benchmark results for comparison (e.g performance between driver versions or firmware updates).
+
+Alongside this, we introduced a Snipe-IT instance for asset tracking, and a new organization system for devices so we could track the sheer amount of devices
+we were procuring for testing. The procedure for onboarding a PC moved into a single script that would deploy the benchmarks, register the system to quasar,
+create an instance in Snipe-IT, and set the storage space that the machine would live in when not being tested. Thsi script was still interactive, but more functionality
+was added to the daemon to eventually allow more automation.
+
+Phase 3 was thought up and implemented by a teammate. If we could make sure that every machine was configured in an identical manner, we could get rid of variability in
+configurations potentially causing variances in performance results not caused by differences in hardware. The solution was an unattend.xml. This did two things, the first was
+configure the OOBE of each machine in an identical manner, and it also injected the daemon and registration scripts into the machine. This also automated the benchmark installation.
+The second phase of the unattend was still interactive, as the Quasar and Snipe registration still asked questions of the user. 
+
+The final phase, and the current state of Quasar, brought Snipe-IT, the installation of benchmarks, and registration in quasar closer together. The only thing a user has to do now is
+run a script on the first OOBE screen, the process will automatically apply the unattend configuration, boot it into the second phase of scripts, which sets power options, and deploys 
+the daemon. The daemon then registers the system with quasar, finds an open storage shelf and assigns the system, creating the Snipe-IT asset, and then begins the deployment of all of the
+benchmarks. At that point, the system can then be assigned to projects in quasar, and benchmarks can be fired off. 
+
+Instead of a fleet of machines taking a day or two to be brought up to benchmark readiness, we can provision multiple machines the same day we acquire them, and start turning around benchmarks
+and data essentially same day. The full benchmark suite including battery life testing still takes several days to a week or more, but that is not something we can control. Essentially every action
+that required a human touch before, is controlled automatically. And as the machines report results back to quasar, they can be pushed to our visualization application for both internal analysts to
+write reports, and for external clients to review. 
 
 ## Zero-Touch Provisioning Architecture
 To replace the fragile RPC/PSExec push mechanism, the target architecture inverts the control model to an autonomous client pull pipeline:
 <ProvisioningLifecycle />
-### Phase 1: Unattended Answer Files & Ingestion
-By embedding a custom `unattend.xml`

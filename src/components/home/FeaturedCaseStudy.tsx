@@ -22,8 +22,12 @@ export function FeaturedCaseStudy({ study }: Props) {
         </p>
       </div>
 
-      {/* Embedded Metric Impact Matrix */}
-      <MetricMatrix metrics={study.metrics} />
+      {/* Only renders if the case study actually defines metrics */}
+      {study.metrics && study.metrics.length > 0 && (
+        <section className="my-8">
+          <MetricMatrix metrics={study.metrics} />
+        </section>
+      )}
 
       {/* Footer: Tech Stack + Deep Dive CTA */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-neutral-800/60">

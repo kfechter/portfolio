@@ -27,7 +27,7 @@ const STAGES = [
     step: "05",
     phase: "Resilient Execution",
     subsystem: "Local State Machine",
-    description: "Runs benchmark suites; flushes telemetry to durable local storage before reboots, surviving battery discharge cutoffs."
+    description: "With NATS messages being durable, the system can pick up messages after reboots, and tests can now be re-ordered or cancelled while in flight."
   }
 ];
 

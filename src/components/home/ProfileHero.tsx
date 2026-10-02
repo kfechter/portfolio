@@ -2,16 +2,10 @@
 export function ProfileHero() {
   return (
     <header className="space-y-6">
-      {/* Live Homelab Status Badge */}
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neutral-800 bg-neutral-900/60 text-xs font-mono text-neutral-300">
-        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-        <span>Self-hosted on Homelab Docker Node</span>
-      </div>
-
       {/* Name & Title */}
       <div className="space-y-2">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
-          Your Name
+          Kenneth Fechter
         </h1>
         <p className="text-lg font-mono text-red-400">
           Senior Systems & Platform Engineer
@@ -27,7 +21,7 @@ export function ProfileHero() {
       {/* Direct Outbound Links */}
       <div className="flex items-center gap-6 pt-2 font-mono text-xs uppercase tracking-wider">
         <a 
-          href="https://github.com/your-username" 
+          href="https://github.com/kfechter" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-neutral-400 hover:text-white transition-colors"
@@ -35,7 +29,7 @@ export function ProfileHero() {
           GitHub ↗
         </a>
         <a 
-          href="https://linkedin.com/in/your-profile" 
+          href="www.linkedin.com/in/kafechter" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-neutral-400 hover:text-white transition-colors"
@@ -43,7 +37,7 @@ export function ProfileHero() {
           LinkedIn ↗
         </a>
         <a 
-          href="mailto:your-email@domain.com" 
+          href="mailto:kfechter@kennethfechter.com" 
           className="text-neutral-400 hover:text-white transition-colors"
         >
           Email ↗

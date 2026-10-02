@@ -45,10 +45,12 @@ export default async function CaseStudyPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Executive Scorecard */}
-      <section className="my-8">
-        <MetricMatrix metrics={study.metrics} />
-      </section>
+      {/* Only renders if the case study actually defines metrics */}
+      {study.metrics && study.metrics.length > 0 && (
+        <section className="my-8">
+          <MetricMatrix metrics={study.metrics} />
+        </section>
+      )}
 
       {/* Narrative body rendered from MDX */}
       <div className="prose prose-invert prose-red max-w-none">

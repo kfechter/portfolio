@@ -13,11 +13,12 @@ export default function HomePage() {
       {/* 1. Header & Identity */}
       <ProfileHero />
       
+      {/* 3. Deep Background, Pillars, & Homelab Specs */}
+      <AboutSection />
+
       {/* 2. Flagship Project Dossier & Impact Matrix */}
       {featured && <FeaturedCaseStudy study={featured} />}
 
-      {/* 3. Deep Background, Pillars, & Homelab Specs */}
-      <AboutSection />
     </main>
   );
 }

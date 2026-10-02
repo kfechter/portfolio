@@ -1,1 +1,33 @@
-Homelab Writeup here!
+## Introduction
+
+My foray into self hosting my applications began with a single computer purchased at a university surplus sale.
+
+A simple Dell Precision T3500 running Ubuntu and eventually Proxmox led to much more.  Soon my lab consisted of
+that Precision, a DL160 G6 rackmount server purchased off of a friend, and a dell R310 given away for free.
+
+The noise and power usage of those three machines led me to ditch enterprise and workstation gear and switch to low power, consumer and prosumer gear.
+
+My current lab topology is as follows.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', margin: '24px 0' }}>
+  
+  <div style={{ padding: '16px', border: '1px solid #eaeaea', borderRadius: '8px', background: '#fafafa' }}>
+    <h4>Networking</h4>
+    * **WAN:** ONT (Altafiber 2gbps symmetrical)
+    * **Router:** Unifi Dream Machine Pro Max
+    * **VPN:** WireGuard
+    * **Switch:** Unifi 24 Pro Max PoE
+  </div>
+
+  <div style={{ padding: '16px', border: '1px solid #eaeaea', borderRadius: '8px', background: '#fafafa' }}>
+    <h4>Compute & Storage</h4>
+    * **Hypervisor:** Proxmox VE 3 Node Cluster
+    * **Node 1:** Intel NUC 13 Pro Slim (i7-1360p, 64GB DDR4, 2TB SSD)
+    * **Node 2:** Intel NUC 13 Pro Slim (i7-1360p, 64GB DDR4, 2TB SSD)
+    * **Node 3:** Intel NUC 12 Extreme (i9-13900, 32GB DDR4, 500GB boot disk, 1TB + 2TB SSDs, Arc A770)
+    * **NAS:** Unifi UNAS Pro
+  </div>
+
+</div>
+
+This lab handles my self hosted infrastructure. Most apps run on docker, with specific apps running on their own LXC Container or VM. Authentication for internal apps is handled with Dex IdP backed by Entra. 
